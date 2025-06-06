@@ -18,7 +18,7 @@ class LoginScene(ctk.CTkFrame):
 
         # Настройка окна
         self.master.configure(bg='#000000')
-        self.master.geometry("600x500")
+        self.master.geometry("800x500")
         self.master.resizable(False, False)
         self.master.title("PyGrader")
 
@@ -83,13 +83,13 @@ class LoginScene(ctk.CTkFrame):
         """Построение UI в фирменном стиле"""
         # Главный контейнер логина
         main_container = ctk.CTkFrame(
-            self, width=320, height=380,
+            self,
             fg_color="#000000",
             corner_radius=12,
             border_width=1,
             border_color="#f09c3a"
         )
-        main_container.place(relx=0.5, rely=0.5, anchor="center")
+        main_container.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.3, relheight=0.75)
         main_container.lift()
 
         # Верхняя секция с логотипом
