@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from database import Database
 from styleManager import StyleManager
+from taskWindow import TaskWindow
 import random
 import datetime
 
@@ -187,6 +188,11 @@ class UserScene(ctk.CTkFrame):
         self.master.destroy()
         self.master.master.deiconify()
 
+    def _open_task_window(self, task):
+        """Open window to solve the selected task."""
+        task_id, title, description, expiration, rules = task
+        TaskWindow(tk.Toplevel(self.master), title, description, self.sm)
+
     def _show_my_tasks(self):
         """Display tasks assigned to the current user"""
         self._clear()
@@ -231,6 +237,7 @@ class UserScene(ctk.CTkFrame):
                 border_color="#f09c3a"
             )
             card.pack(fill="x", pady=10, padx=5)
+            card.bind("<Button-1>", lambda e, t=task: self._open_task_window(t))
 
             # Task header
             header_frame = ctk.CTkFrame(card, fg_color="transparent")
@@ -331,6 +338,7 @@ class UserScene(ctk.CTkFrame):
                 border_color="#f09c3a"
             )
             card.pack(fill="x", pady=10, padx=5)
+            card.bind("<Button-1>", lambda e, t=task: self._open_task_window(t))
 
             # Task header
             header_frame = ctk.CTkFrame(card, fg_color="transparent")
