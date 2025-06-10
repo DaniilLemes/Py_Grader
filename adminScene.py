@@ -187,17 +187,29 @@ class AdminScene(ctk.CTkFrame):
         messagebox.showinfo("Success", f"Created user '{name}'! 🎉")
         self._show_welcome()
 
-    def _submit_task(self, entries):
-        """Handle task creation"""
+    def _submit_task(self, entries, test_entries):
+        """Handle task creation with optional test cases."""
         title = entries["Title"].get().strip()
         desc = entries["Description"].get().strip()
         exp = entries["Expiration (YYYY-MM-DD)"].get().strip() or None
         rules = entries["Validation Rules"].get().strip()
+
         if not (title and desc and rules):
             messagebox.showwarning("Missing", "Title, description, and rules required 💔")
             return
+
+        tests = []
+        for case_entry, ans_entry in test_entries:
+            case = case_entry.get().strip()
+            ans = ans_entry.get().strip()
+            if case or ans:
+                if not case or not ans:
+                    messagebox.showwarning("Missing", "Each test needs both input and output")
+                    return
+                tests.append((case, ans))
+
         try:
-            self.db.add_task(title, desc, exp, rules)
+            self.db.add_task(title, desc, exp, rules, tests if tests else None)
         except Exception as exc:
             messagebox.showerror("DB Error", f"Failed to add task: {exc}")
             return
@@ -237,10 +249,60 @@ class AdminScene(ctk.CTkFrame):
             e.pack(fill="x", padx=200, pady=5)
             entries[label] = e
 
+        # container for test cases
+        tests_container = ctk.CTkFrame(self.content, fg_color="transparent")
+        tests_container.pack(fill="x", padx=200, pady=(10, 5))
+
+        self.test_entries: list[tuple[ctk.CTkEntry, ctk.CTkEntry]] = []
+
+        def add_case():
+            row = ctk.CTkFrame(tests_container, fg_color="transparent")
+            row.pack(fill="x", pady=2)
+            case_e = ctk.CTkEntry(
+                row,
+                placeholder_text="Test input",
+                font=("Helvetica", 12),
+                height=30,
+                fg_color="#242424",
+                text_color="#ffffff",
+                placeholder_text_color="#999999",
+                border_color="#f09c3a",
+                border_width=1,
+                corner_radius=8,
+            )
+            case_e.pack(side="left", expand=True, fill="x", padx=(0, 5))
+            ans_e = ctk.CTkEntry(
+                row,
+                placeholder_text="Expected output",
+                font=("Helvetica", 12),
+                height=30,
+                fg_color="#242424",
+                text_color="#ffffff",
+                placeholder_text_color="#999999",
+                border_color="#f09c3a",
+                border_width=1,
+                corner_radius=8,
+            )
+            ans_e.pack(side="left", expand=True, fill="x")
+            self.test_entries.append((case_e, ans_e))
+
+        add_case()
+
+        ctk.CTkButton(
+            self.content,
+            text="Add Test Case",
+            command=add_case,
+            font=("Helvetica", 12, "bold"),
+            fg_color="#303030",
+            hover_color="#505050",
+            text_color="#ffffff",
+            corner_radius=8,
+        ).pack(pady=(0, 10))
+
         ctk.CTkButton(
             self.content,
             text="Create 🚀",
-            command=lambda: self._submit_task(entries),
+            command=lambda: self._submit_task(entries, self.test_entries),
             font=("Helvetica", 13, "bold"),
             height=40,
             fg_color="#f09c3a",
