@@ -304,17 +304,6 @@ class UserScene(ctk.CTkFrame):
                 corner_radius=8,
             ).pack(pady=(0, 10))
 
-            ctk.CTkButton(
-                card,
-                text="Solve",
-                command=lambda t=task: self._open_task_window(t),
-                font=("Helvetica", 12, "bold"),
-                fg_color="#f09c3a",
-                hover_color="#ff8800",
-                text_color="#000000",
-                corner_radius=8,
-            ).pack(pady=(0, 10))
-
     def _show_all_tasks(self):
         """Display all tasks in the system"""
         self._clear()

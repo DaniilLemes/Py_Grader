@@ -82,9 +82,10 @@ class Database:
             cur.execute(
                     """CREATE TABLE IF NOT EXISTS TestCase (
                         test_id INTEGER PRIMARY KEY,
-                        test_case TEXT NOT NULL,
-                        correct_answer TEXT NOT NULL,
-                        task_id INTEGER NOT NULL REFERENCES Task(task_id)
+                        input_data TEXT NOT NULL,
+                        expected_output TEXT NOT NULL,
+                        task_id INTEGER NOT NULL
+                            REFERENCES Task(task_id) ON DELETE CASCADE
                     );"""
             )
             cur.execute(
@@ -122,17 +123,38 @@ class Database:
         row = self._cursor.fetchone()
         return bool(row[0]) if row else False
 
-    def add_task(self, title: str, description: str, expiration_date: str | None, rules: str):
+    def add_task(
+        self,
+        title: str,
+        description: str,
+        expiration_date: str | None,
+        rules: str,
+        tests: list[tuple[str, str]] | None = None,
+    ) -> int:
+        """Add a task and optional test cases. Return new task_id."""
         with self._tx():
-            self._cursor.execute(
-                    "INSERT INTO Task(title, description, expiration_date, validation_rules) VALUES (?,?,?,?);",
-                    (
-                        self._enc(title),
-                        self._enc(description),
-                        self._enc(expiration_date) if expiration_date else None,
-                        self._enc(rules),
-                    ),
+            cur = self._cursor
+            cur.execute(
+                "INSERT INTO Task(title, description, expiration_date, validation_rules) VALUES (?,?,?,?);",
+                (
+                    self._enc(title),
+                    self._enc(description),
+                    self._enc(expiration_date) if expiration_date else None,
+                    self._enc(rules),
+                ),
             )
+            task_id = cur.lastrowid
+            if tests:
+                for case, ans in tests:
+                    cur.execute(
+                        "INSERT INTO TestCase(input_data, expected_output, task_id) VALUES (?,?,?);",
+                        (
+                            self._enc(case),
+                            self._enc(ans),
+                            task_id,
+                        ),
+                    )
+        return task_id
 
     def get_tasks_for_user(self, user_id: int):
         self._cursor.execute(
@@ -158,14 +180,14 @@ class Database:
                 self._dec(rules),
             )
 
-    def add_test_case(self, task_id: int, test_case: str, correct_answer: str):
+    def add_test_case(self, task_id: int, input_data: str, expected_output: str):
         """Add a new test case for the given task."""
         with self._tx():
             self._cursor.execute(
-                "INSERT INTO TestCase(test_case, correct_answer, task_id) VALUES (?,?,?);",
+                "INSERT INTO TestCase(input_data, expected_output, task_id) VALUES (?,?,?);",
                 (
-                    self._enc(test_case),
-                    self._enc(correct_answer),
+                    self._enc(input_data),
+                    self._enc(expected_output),
                     task_id,
                 ),
             )
@@ -173,7 +195,7 @@ class Database:
     def get_test_cases(self, task_id: int):
         """Yield (case, answer) pairs for the task."""
         self._cursor.execute(
-            "SELECT test_case, correct_answer FROM TestCase WHERE task_id=?;",
+            "SELECT input_data, expected_output FROM TestCase WHERE task_id=?;",
             (task_id,),
         )
         for case, ans in self._cursor.fetchall():
