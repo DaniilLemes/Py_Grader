@@ -12,6 +12,7 @@ class TaskWindow(ctk.CTkToplevel):
         master: tk.Misc,
         title: str,
         description: str,
+        expiration: str | None,
         tests: list[tuple[str, str]],
         style_mgr: StyleManager,
     ):
@@ -49,6 +50,14 @@ class TaskWindow(ctk.CTkToplevel):
             wraplength=220,
             justify="left",
         ).pack(padx=10, pady=(10, 5))
+
+        if expiration:
+            ctk.CTkLabel(
+                desc_frame,
+                text=f"⏱️ Due: {expiration}",
+                font=("Helvetica", 12),
+                text_color="#aaaaaa",
+            ).pack(padx=10, pady=(0, 5), anchor="w")
 
         desc_text = ctk.CTkTextbox(
             desc_frame,
@@ -98,7 +107,7 @@ class TaskWindow(ctk.CTkToplevel):
         )
         self.code_box.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=10, pady=(10, 5))
 
-        buttons = ["Run", "Test", "Apply", "Upload Archive"]
+        buttons = ["Run", "Test", "Submit", "Upload Archive"]
         for idx, name in enumerate(buttons):
             ctk.CTkButton(
                 right_frame,

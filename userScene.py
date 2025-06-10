@@ -192,7 +192,7 @@ class UserScene(ctk.CTkFrame):
         """Open window to solve the selected task."""
         task_id, title, description, expiration, rules = task
         tests = list(self.db.get_test_cases(task_id))
-        TaskWindow(self.master, title, description, tests, self.sm)
+        TaskWindow(self.master, title, description, expiration, tests, self.sm)
     def _show_my_tasks(self):
         """Display tasks assigned to the current user"""
         self._clear()
@@ -284,6 +284,7 @@ class UserScene(ctk.CTkFrame):
                     text_color="#f09c3a"
                 ).pack(anchor="w")
 
+
                 ctk.CTkLabel(
                     rules_frame,
                     text=rules,
@@ -292,6 +293,8 @@ class UserScene(ctk.CTkFrame):
                     wraplength=700,
                     justify="left"
                 ).pack(anchor="w", padx=(20, 0))
+
+
 
             ctk.CTkButton(
                 card,
@@ -403,6 +406,17 @@ class UserScene(ctk.CTkFrame):
                     wraplength=700,
                     justify="left"
                 ).pack(anchor="w", padx=(20, 0))
+
+            ctk.CTkButton(
+                card,
+                text="Solve",
+                command=lambda t=task: self._open_task_window(t),
+                font=("Helvetica", 12, "bold"),
+                fg_color="#f09c3a",
+                hover_color="#ff8800",
+                text_color="#000000",
+                corner_radius=8,
+            ).pack(pady=(0, 10))
 
     def _show_users(self):
         """Display all users in the system"""
