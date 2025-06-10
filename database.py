@@ -157,3 +157,32 @@ class Database:
                 self._dec(exp) if exp else None,
                 self._dec(rules),
             )
+
+    def add_test_case(self, task_id: int, test_case: str, correct_answer: str):
+        """Add a new test case for the given task."""
+        with self._tx():
+            self._cursor.execute(
+                "INSERT INTO TestCase(test_case, correct_answer, task_id) VALUES (?,?,?);",
+                (
+                    self._enc(test_case),
+                    self._enc(correct_answer),
+                    task_id,
+                ),
+            )
+
+    def get_test_cases(self, task_id: int):
+        """Yield (case, answer) pairs for the task."""
+        self._cursor.execute(
+            "SELECT test_case, correct_answer FROM TestCase WHERE task_id=?;",
+            (task_id,),
+        )
+        for case, ans in self._cursor.fetchall():
+            yield self._dec(case), self._dec(ans)
+
+    def assign_task(self, user_id: int, task_id: int):
+        """Assign a task to the user."""
+        with self._tx():
+            self._cursor.execute(
+                "INSERT OR IGNORE INTO UserTask(user_id, task_id) VALUES (?,?);",
+                (user_id, task_id),
+            )

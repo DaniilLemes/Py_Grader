@@ -191,8 +191,8 @@ class UserScene(ctk.CTkFrame):
     def _open_task_window(self, task):
         """Open window to solve the selected task."""
         task_id, title, description, expiration, rules = task
-
-
+        tests = list(self.db.get_test_cases(task_id))
+        TaskWindow(self.master, title, description, tests, self.sm)
     def _show_my_tasks(self):
         """Display tasks assigned to the current user"""
         self._clear()
@@ -237,7 +237,6 @@ class UserScene(ctk.CTkFrame):
                 border_color="#f09c3a"
             )
             card.pack(fill="x", pady=10, padx=5)
-            card.bind("<Button-1>", lambda e, t=task: self._open_task_window(t))
 
             # Task header
             header_frame = ctk.CTkFrame(card, fg_color="transparent")
@@ -294,6 +293,28 @@ class UserScene(ctk.CTkFrame):
                     justify="left"
                 ).pack(anchor="w", padx=(20, 0))
 
+            ctk.CTkButton(
+                card,
+                text="Solve",
+                command=lambda t=task: self._open_task_window(t),
+                font=("Helvetica", 12, "bold"),
+                fg_color="#f09c3a",
+                hover_color="#ff8800",
+                text_color="#000000",
+                corner_radius=8,
+            ).pack(pady=(0, 10))
+
+            ctk.CTkButton(
+                card,
+                text="Solve",
+                command=lambda t=task: self._open_task_window(t),
+                font=("Helvetica", 12, "bold"),
+                fg_color="#f09c3a",
+                hover_color="#ff8800",
+                text_color="#000000",
+                corner_radius=8,
+            ).pack(pady=(0, 10))
+
     def _show_all_tasks(self):
         """Display all tasks in the system"""
         self._clear()
@@ -338,7 +359,6 @@ class UserScene(ctk.CTkFrame):
                 border_color="#f09c3a"
             )
             card.pack(fill="x", pady=10, padx=5)
-            card.bind("<Button-1>", lambda e, t=task: self._open_task_window(t))
 
             # Task header
             header_frame = ctk.CTkFrame(card, fg_color="transparent")
