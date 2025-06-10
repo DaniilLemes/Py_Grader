@@ -189,14 +189,18 @@ class AdminScene(ctk.CTkFrame):
 
     def _submit_task(self, entries):
         """Handle task creation"""
-        title = entries["Title"].value()
-        desc = entries["Description"].value()
-        exp = entries["Expiration (YYYY-MM-DD)"].value() or None
-        rules = entries["Validation Rules"].value()
+        title = entries["Title"].get().strip()
+        desc = entries["Description"].get().strip()
+        exp = entries["Expiration (YYYY-MM-DD)"].get().strip() or None
+        rules = entries["Validation Rules"].get().strip()
         if not (title and desc and rules):
             messagebox.showwarning("Missing", "Title, description, and rules required 💔")
             return
-        self.db.add_task(title, desc, exp, rules)
+        try:
+            self.db.add_task(title, desc, exp, rules)
+        except Exception as exc:
+            messagebox.showerror("DB Error", f"Failed to add task: {exc}")
+            return
 
         print("\n=== Task table ===")
         for tid, ttitle, tdesc, texp, trules in self.db.get_tasks():

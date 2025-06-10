@@ -42,14 +42,18 @@ class TaskWindow(ctk.CTkToplevel):
             justify="left",
         ).pack(padx=10, pady=(10, 5))
 
-        ctk.CTkLabel(
+        desc_text = ctk.CTkTextbox(
             desc_frame,
-            text=description,
-            font=("Helvetica", 13),
+            fg_color="#1a1a1a",
             text_color="#ffffff",
-            wraplength=220,
-            justify="left",
-        ).pack(fill="both", expand=True, padx=10)
+            wrap="word",
+            state="disabled",
+            width=220,
+        )
+        desc_text.pack(fill="both", expand=True, padx=10)
+        desc_text.configure(state="normal")
+        desc_text.insert("1.0", description)
+        desc_text.configure(state="disabled")
 
         ctk.CTkButton(
             desc_frame,
@@ -75,7 +79,13 @@ class TaskWindow(ctk.CTkToplevel):
         right_frame.rowconfigure(0, weight=1)
         right_frame.columnconfigure(0, weight=1)
 
-        self.code_box = ctk.CTkTextbox(right_frame)
+        self.code_box = ctk.CTkTextbox(
+            right_frame,
+            fg_color="#242424",
+            text_color="#ffffff",
+            border_color="#f09c3a",
+            border_width=1,
+        )
         self.code_box.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=10, pady=(10, 5))
 
         button_texts = ["Run", "Test", "Submit", "Upload Archive"]
