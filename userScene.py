@@ -191,7 +191,7 @@ class UserScene(ctk.CTkFrame):
     def _open_task_window(self, task):
         """Open window to solve the selected task."""
         task_id, title, description, expiration, rules = task
-        TaskWindow(tk.Toplevel(self.master), title, description, self.sm)
+
 
     def _show_my_tasks(self):
         """Display tasks assigned to the current user"""
