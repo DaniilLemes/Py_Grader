@@ -376,6 +376,7 @@ def solution():
             btn.pack(side="left", padx=8, pady=5, expand=True, fill="x")
             btn.bind("<Button-1>", lambda e, b=btn: self._animate_action_button(e, b))
 
+
     def _animate_close_button(self, event):
         """Animate close button click"""
         btn = event.widget
