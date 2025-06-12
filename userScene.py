@@ -139,7 +139,6 @@ class UserScene(ctk.CTkFrame):
             ("📝 My Tasks", self._show_my_tasks),
             ("📊 All Tasks", self._show_all_tasks),
             ("👥 Users", self._show_users),
-            ("🌗 Toggle Theme", self.sm.toggle_theme),
             ("🚪 Logout", self._logout)
         ]
 

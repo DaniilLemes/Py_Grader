@@ -116,7 +116,6 @@ class AdminScene(ctk.CTkFrame):
             ("🚀 Add User", self._add_user),
             ("📝 Add Task", self._add_task),
             ("👥 Users", self._list_users),
-            ("🌗 Toggle Theme", self.sm.toggle_theme)
         ]
 
         for text, command in buttons:
