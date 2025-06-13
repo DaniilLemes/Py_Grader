@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Iterable, Tuple, List, Dict, Any
 import zipfile
 import shlex
+import ast
 
 
 def _parse_args(inp: str) -> list[str]:
@@ -16,9 +17,17 @@ def _parse_args(inp: str) -> list[str]:
     """
 
     stripped = inp.strip()
-    if stripped and stripped[0] in "[{(" and stripped[-1] in "]})":
-        return [inp]
-    return shlex.split(inp)
+    if not stripped:
+        return []
+
+    try:
+        value = ast.literal_eval(stripped)
+    except Exception:
+        return shlex.split(inp)
+
+    if isinstance(value, (list, tuple)):
+        return [str(v) for v in value]
+    return [str(value)]
 
 from docker_runner import DockerTaskRunner
 from contextlib import contextmanager
