@@ -189,9 +189,19 @@ class UserScene(ctk.CTkFrame):
 
     def _open_task_window(self, task):
         """Open window to solve the selected task."""
-        task_id, title, description, expiration, rules = task
+        task_id, title, description, expiration, rules, _ = task
         tests = list(self.db.get_test_cases(task_id))
-        TaskWindow(self.master, title, description, expiration, tests, self.sm)
+        TaskWindow(
+            self.master,
+            title,
+            description,
+            expiration,
+            tests,
+            self.sm,
+            db=self.db,
+            user_id=self.user_id,
+            task_id=task_id,
+        )
     def _show_my_tasks(self):
         """Display tasks assigned to the current user"""
         self._clear()
@@ -225,8 +235,8 @@ class UserScene(ctk.CTkFrame):
         container.pack(fill="both", expand=True, padx=20, pady=10)
 
         for task in tasks:
-            task_id, title, description, expiration, rules = task
-
+            task_id, title, description, expiration, rules, passed = task
+            
             # Task card
             card = ctk.CTkFrame(
                 container,
@@ -293,7 +303,29 @@ class UserScene(ctk.CTkFrame):
                     justify="left"
                 ).pack(anchor="w", padx=(20, 0))
 
+            # Progress information
+            total_tests = self.db.count_tests(task_id)
+            status_frame = ctk.CTkFrame(card, fg_color="transparent")
+            status_frame.pack(fill="x", padx=15, pady=(0, 5))
 
+            if total_tests:
+                status_text = f"{passed}/{total_tests} tests passed"
+                if passed == total_tests:
+                    color = "#2ecc71"
+                elif passed == 0:
+                    color = "#e74c3c"
+                else:
+                    color = "#f1c40f"
+            else:
+                status_text = "No tests"
+                color = "#aaaaaa"
+
+            ctk.CTkLabel(
+                status_frame,
+                text=status_text,
+                font=("Helvetica", 12, "bold"),
+                text_color=color,
+            ).pack(anchor="w")
 
             ctk.CTkButton(
                 card,
