@@ -399,21 +399,21 @@ if __name__ == "__main__":
 
         code = self.code_box.get("1.0", "end")
         try:
-            results = check_solution(self.tests, code=code)
+            results, passed = check_solution(self.tests, code=code)
         except Exception as exc:
             messagebox.showerror("Execution Error", str(exc))
             return
 
-        all_passed = all(r["passed"] for r in results)
-        lines = []
+        total = len(results)
+        lines = [f"Score: {passed}/{total} tests passed"]
         for idx, r in enumerate(results, 1):
             status = "✅" if r["passed"] else "❌"
             lines.append(
-                f"Test {idx}: {status} expected {r['expected']} got {r['output']}"
+                f"{status} input: '{r['input']}' expected '{r['expected']}' got '{r['output']}'"
             )
 
         message = "\n".join(lines)
-        title = "Success" if all_passed else "Results"
+        title = "Results"
         messagebox.showinfo(title, message)
 
     def _test_code(self):
@@ -437,19 +437,19 @@ if __name__ == "__main__":
             return
 
         try:
-            results = check_solution(self.tests, archive=path)
+            results, passed = check_solution(self.tests, archive=path)
         except Exception as exc:
             messagebox.showerror("Execution Error", str(exc))
             return
 
-        all_passed = all(r["passed"] for r in results)
-        lines = []
+        total = len(results)
+        lines = [f"Score: {passed}/{total} tests passed"]
         for idx, r in enumerate(results, 1):
             status = "✅" if r["passed"] else "❌"
             lines.append(
-                f"Test {idx}: {status} expected {r['expected']} got {r['output']}"
+                f"{status} input: '{r['input']}' expected '{r['expected']}' got '{r['output']}'"
             )
 
         message = "\n".join(lines)
-        title = "Success" if all_passed else "Results"
+        title = "Results"
         messagebox.showinfo(title, message)
