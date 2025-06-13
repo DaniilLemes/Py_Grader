@@ -92,6 +92,7 @@ class Database:
                     """CREATE TABLE IF NOT EXISTS UserTask (
                         user_id INTEGER NOT NULL REFERENCES User(user_id),
                         task_id INTEGER NOT NULL REFERENCES Task(task_id),
+                        passed_tests INTEGER DEFAULT 0,
                         PRIMARY KEY (user_id, task_id)
                     );"""
             )
@@ -158,13 +159,22 @@ class Database:
 
     def get_tasks_for_user(self, user_id: int):
         self._cursor.execute(
-                """SELECT t.task_id, t.title, t.description, t.expiration_date, t.validation_rules
-                   FROM Task t JOIN UserTask ut ON t.task_id = ut.task_id WHERE ut.user_id=?;""",
+                """SELECT t.task_id, t.title, t.description, t.expiration_date,
+                          t.validation_rules, ut.passed_tests
+                   FROM Task t JOIN UserTask ut ON t.task_id = ut.task_id
+                   WHERE ut.user_id=?;""",
                 (user_id,),
         )
         for row in self._cursor.fetchall():
-            tid, tl, desc, exp, rules = row
-            yield tid, self._dec(tl), self._dec(desc), self._dec(exp) if exp else None, self._dec(rules)
+            tid, tl, desc, exp, rules, passed = row
+            yield (
+                tid,
+                self._dec(tl),
+                self._dec(desc),
+                self._dec(exp) if exp else None,
+                self._dec(rules),
+                passed,
+            )
 
     def get_tasks(self):
         """Yield all tasks in the Task table (decoded)."""
@@ -208,3 +218,29 @@ class Database:
                 "INSERT OR IGNORE INTO UserTask(user_id, task_id) VALUES (?,?);",
                 (user_id, task_id),
             )
+
+    def update_task_progress(self, user_id: int, task_id: int, passed_tests: int):
+        """Update how many tests the user passed for a task."""
+        with self._tx():
+            self._cursor.execute(
+                "UPDATE UserTask SET passed_tests=? WHERE user_id=? AND task_id=?;",
+                (passed_tests, user_id, task_id),
+            )
+
+    def get_task_progress(self, user_id: int, task_id: int) -> int:
+        """Return number of passed tests for this user and task."""
+        self._cursor.execute(
+            "SELECT passed_tests FROM UserTask WHERE user_id=? AND task_id=?;",
+            (user_id, task_id),
+        )
+        row = self._cursor.fetchone()
+        return row[0] if row else 0
+
+    def count_tests(self, task_id: int) -> int:
+        """Return how many tests exist for a task."""
+        self._cursor.execute(
+            "SELECT COUNT(*) FROM TestCase WHERE task_id=?;",
+            (task_id,),
+        )
+        row = self._cursor.fetchone()
+        return row[0] if row else 0

@@ -2,6 +2,7 @@ import customtkinter as ctk
 import tkinter as tk
 from styleManager import StyleManager
 import random
+from database import Database
 
 class TaskWindow(ctk.CTkToplevel):
     """Window used to solve a task with animated particle background."""
@@ -14,10 +15,17 @@ class TaskWindow(ctk.CTkToplevel):
             expiration: str | None,
             tests: list[tuple[str, str]],
             style_mgr: StyleManager,
+            *,
+            db: Database | None = None,
+            user_id: int | None = None,
+            task_id: int | None = None,
     ):
         super().__init__(master)
         self.sm = style_mgr
         self.tests = tests
+        self.db = db
+        self.user_id = user_id
+        self.task_id = task_id
         self.configure(fg_color="#000000")
         self.geometry("720x480")  # Reduced window size
         self.resizable(False, False)
@@ -352,7 +360,6 @@ if __name__ == "__main__":
 
         buttons_data = [
             ("▶ Run", "#f09c3a", "#ff8800", self._run_code),
-            ("🧪 Test", "#f09c3a", "#ff8800", self._test_code),
             ("📤 Submit", "#f09c3a", "#ff8800", self._submit_code),
             ("📁 Upload", "#f09c3a", "#ff8800", self._upload_archive)
         ]
@@ -414,13 +421,33 @@ if __name__ == "__main__":
 
         self._show_results("Results", "\n".join(lines))
 
-    def _test_code(self):
-        """Test the code (placeholder)"""
-        print("Testing code...")
-
     def _submit_code(self):
-        """Submit the code (placeholder)"""
-        print("Submitting code...")
+        """Run tests and store the progress for this task."""
+        from task_checker import check_solution
+        from tkinter import messagebox
+
+        code = self.code_box.get("1.0", "end")
+        try:
+            results, passed = check_solution(self.tests, code=code)
+        except Exception as exc:
+            messagebox.showerror("Execution Error", str(exc))
+            return
+
+        total = len(results)
+        lines = [f"Score: {passed}/{total} tests passed"]
+        for idx, r in enumerate(results, 1):
+            status = "✅" if r["passed"] else "❌"
+            lines.append(
+                f"{status} input: '{r['input']}' expected '{r['expected']}' got '{r['output']}'"
+            )
+
+        if self.db and self.user_id is not None and self.task_id is not None:
+            try:
+                self.db.update_task_progress(self.user_id, self.task_id, passed)
+            except Exception as exc:
+                messagebox.showerror("DB Error", str(exc))
+
+        self._show_results("Submission Results", "\n".join(lines))
 
     def _upload_archive(self):
         """Allow user to select a zip archive with solution and test it."""
