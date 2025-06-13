@@ -17,6 +17,7 @@ class TaskWindow(ctk.CTkToplevel):
     ):
         super().__init__(master)
         self.sm = style_mgr
+        self.tests = tests
         self.configure(fg_color="#000000")
         self.geometry("720x480")  # Reduced window size
         self.resizable(False, False)
@@ -319,16 +320,18 @@ class TaskWindow(ctk.CTkToplevel):
         self.code_box.pack(fill="both", expand=True, padx=10, pady=(10, 10))
 
         placeholder = """# Write your solution here
-def solution():
-    \"\"\"
-    Implement your solution here.
-    \"\"\"
-    # Your code goes here
-    pass
+import sys
 
-# Example usage:
-# result = solution()
-# print(result)"""
+
+def main(args: list[str]):
+    \"\"\"Implement your solution here.\"\"\"
+    # Example: print received args
+    print(args)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
+"""
         self.code_box.insert("1.0", placeholder)
 
         self._create_button_panel(parent)
@@ -389,8 +392,28 @@ def solution():
         self.after(120, lambda: button.configure(fg_color="#f09c3a"))
 
     def _run_code(self):
-        """Run the code (placeholder)"""
-        print("Running code...")
+        """Run the code using the DockerTaskRunner against stored tests."""
+        from tkinter import messagebox
+        from task_checker import check_solution
+
+        code = self.code_box.get("1.0", "end")
+        try:
+            results = check_solution(self.tests, code=code)
+        except Exception as exc:
+            messagebox.showerror("Execution Error", str(exc))
+            return
+
+        all_passed = all(r["passed"] for r in results)
+        lines = []
+        for idx, r in enumerate(results, 1):
+            status = "✅" if r["passed"] else "❌"
+            lines.append(
+                f"Test {idx}: {status} expected {r['expected']} got {r['output']}"
+            )
+
+        message = "\n".join(lines)
+        title = "Success" if all_passed else "Results"
+        messagebox.showinfo(title, message)
 
     def _test_code(self):
         """Test the code (placeholder)"""
@@ -401,5 +424,31 @@ def solution():
         print("Submitting code...")
 
     def _upload_archive(self):
-        """Upload archive (placeholder)"""
-        print("Uploading archive...")
+        """Allow user to select a zip archive with solution and test it."""
+        from tkinter import filedialog, messagebox
+        from task_checker import check_solution
+
+        path = filedialog.askopenfilename(
+            title="Select archive",
+            filetypes=[("Zip archives", "*.zip"), ("All files", "*")],
+        )
+        if not path:
+            return
+
+        try:
+            results = check_solution(self.tests, archive=path)
+        except Exception as exc:
+            messagebox.showerror("Execution Error", str(exc))
+            return
+
+        all_passed = all(r["passed"] for r in results)
+        lines = []
+        for idx, r in enumerate(results, 1):
+            status = "✅" if r["passed"] else "❌"
+            lines.append(
+                f"Test {idx}: {status} expected {r['expected']} got {r['output']}"
+            )
+
+        message = "\n".join(lines)
+        title = "Success" if all_passed else "Results"
+        messagebox.showinfo(title, message)
