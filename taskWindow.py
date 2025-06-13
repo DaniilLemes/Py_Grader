@@ -320,16 +320,18 @@ class TaskWindow(ctk.CTkToplevel):
         self.code_box.pack(fill="both", expand=True, padx=10, pady=(10, 10))
 
         placeholder = """# Write your solution here
-def solution():
-    \"\"\"
-    Implement your solution here.
-    \"\"\"
-    # Your code goes here
-    pass
+import sys
 
-# Example usage:
-# result = solution()
-# print(result)"""
+
+def main(args: list[str]):
+    \"\"\"Implement your solution here.\"\"\"
+    # Example: print received args
+    print(args)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
+"""
         self.code_box.insert("1.0", placeholder)
 
         self._create_button_panel(parent)
