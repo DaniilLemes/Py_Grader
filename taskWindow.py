@@ -24,8 +24,9 @@ class TaskWindow(ctk.CTkToplevel):
 
         # Make window modal and center it
         self.transient(master)
-        self.grab_set()
+        self.after(0, self.grab_set)  # defer grab until window is visible
         self._center_window()
+        self.protocol("WM_DELETE_WINDOW", self.destroy)
 
         # Canvas for animated particle background
         self.canvas = tk.Canvas(self, bg='#000000', highlightthickness=0)
