@@ -19,15 +19,27 @@ class DockerTaskRunner:
         self.pids_limit = pids_limit
         self.client = docker.from_env()
 
-    def run_code(self, code: str, timeout: int = 5) -> Dict[str, Any]:
-        """Run the provided Python code inside the container and return execution info."""
+    def run_code(self, code: str, args: list[str] | None = None, timeout: int = 5) -> Dict[str, Any]:
+        """Run the provided Python code inside the container and return execution info.
+
+        Parameters
+        ----------
+        code: str
+            Source code of ``main.py`` to execute.
+        args: list[str] | None, optional
+            Arguments to pass to the script as ``sys.argv[1:]``.
+        timeout: int, optional
+            Maximum execution time in seconds.
+        """
+        if args is None:
+            args = []
         with tempfile.TemporaryDirectory() as tmpdir:
             code_path = Path(tmpdir) / "main.py"
             code_path.write_text(code)
 
             container = self.client.containers.run(
                 self.image,
-                command=["python", str(code_path.name)],
+                command=["python", str(code_path.name), *args],
                 network_mode="none",
                 detach=True,
                 volumes={tmpdir: {"bind": "/code", "mode": "ro"}},

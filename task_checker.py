@@ -3,21 +3,34 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Iterable, Tuple, List, Dict, Any
 import zipfile
+import shlex
 
 from docker_runner import DockerTaskRunner
 
 
 def extract_code_from_archive(archive_path: str | Path) -> str:
-    """Extract main.py from the provided zip archive and return its contents."""
+    """Extract ``main.py`` from the provided zip archive.
+
+    If ``main.py`` is not present but there is exactly one ``.py`` file in the
+    archive, that file will be used as ``main.py``. This makes uploads a little
+    more forgiving for users who forget to name their entry point correctly.
+    """
     path = Path(archive_path)
     if not path.is_file():
         raise FileNotFoundError(f"Archive not found: {path}")
 
     with zipfile.ZipFile(path) as zf:
-        for name in zf.namelist():
+        py_files = [n for n in zf.namelist() if n.lower().endswith('.py')]
+        for name in py_files:
             if name.lower().endswith('main.py'):
                 with zf.open(name) as f:
                     return f.read().decode('utf-8')
+
+        # Fallback: single python file becomes main
+        if len(py_files) == 1:
+            with zf.open(py_files[0]) as f:
+                return f.read().decode('utf-8')
+
     raise FileNotFoundError("main.py not found in archive")
 
 
@@ -32,10 +45,10 @@ def check_solution(
     """Run solution code against test cases using DockerTaskRunner.
 
     Either ``code`` or ``archive`` must be provided. ``tests`` is an iterable of
-    ``(input_data, expected_output)`` pairs. The candidate solution is expected
-    to expose a function named ``solve`` which will be called for each test
-    case. The return value is a list with one entry per test describing the
-    execution outcome.
+    ``(args, expected_output)`` pairs. Each ``args`` value is a string that will
+    be parsed similar to a shell command and passed to ``main.py`` as
+    ``sys.argv[1:]``. The return value contains one entry per test describing
+    the execution outcome.
     """
 
     if code is None and archive is None:
@@ -49,8 +62,8 @@ def check_solution(
 
     results: List[Dict[str, Any]] = []
     for inp, expected in tests:
-        test_code = f"{code}\nprint(solve({inp}))\n"
-        res = runner.run_code(test_code, timeout=timeout)
+        argv = shlex.split(inp)
+        res = runner.run_code(code, args=argv, timeout=timeout)
         output = res.get('output', '').strip()
         passed = output == str(expected)
         results.append({
