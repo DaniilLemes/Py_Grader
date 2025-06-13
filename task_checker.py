@@ -5,6 +5,21 @@ from typing import Iterable, Tuple, List, Dict, Any
 import zipfile
 import shlex
 
+
+def _parse_args(inp: str) -> list[str]:
+    """Parse the stored input string into ``sys.argv`` style arguments.
+
+    The default behaviour uses ``shlex.split`` which splits on spaces.
+    However many tasks store complex values such as ``"[1, 2, 3]"`` that
+    should be passed as a single argument.  If the input string looks like
+    a Python literal wrapped in brackets we treat it as one argument.
+    """
+
+    stripped = inp.strip()
+    if stripped and stripped[0] in "[{(" and stripped[-1] in "]})":
+        return [inp]
+    return shlex.split(inp)
+
 from docker_runner import DockerTaskRunner
 from contextlib import contextmanager
 import tempfile
@@ -99,7 +114,7 @@ def check_solution(
     if code is None:
         with extract_project_from_archive(archive) as (dir_path, entry):
             for inp, expected in tests:
-                argv = shlex.split(inp)
+                argv = _parse_args(inp)
                 res = runner.run_code(None, dir_path=dir_path, entry=entry, args=argv, timeout=timeout)
                 output = res.get('output', '').strip()
                 passed = output == str(expected)
@@ -114,7 +129,7 @@ def check_solution(
                 })
     else:
         for inp, expected in tests:
-            argv = shlex.split(inp)
+            argv = _parse_args(inp)
             res = runner.run_code(code, args=argv, timeout=timeout)
             output = res.get('output', '').strip()
             passed = output == str(expected)

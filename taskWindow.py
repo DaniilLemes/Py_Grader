@@ -394,13 +394,13 @@ if __name__ == "__main__":
 
     def _run_code(self):
         """Run the code using the DockerTaskRunner against stored tests."""
-        from tkinter import messagebox
         from task_checker import check_solution
 
         code = self.code_box.get("1.0", "end")
         try:
             results, passed = check_solution(self.tests, code=code)
         except Exception as exc:
+            from tkinter import messagebox
             messagebox.showerror("Execution Error", str(exc))
             return
 
@@ -412,9 +412,7 @@ if __name__ == "__main__":
                 f"{status} input: '{r['input']}' expected '{r['expected']}' got '{r['output']}'"
             )
 
-        message = "\n".join(lines)
-        title = "Results"
-        messagebox.showinfo(title, message)
+        self._show_results("Results", "\n".join(lines))
 
     def _test_code(self):
         """Test the code (placeholder)"""
@@ -450,6 +448,24 @@ if __name__ == "__main__":
                 f"{status} input: '{r['input']}' expected '{r['expected']}' got '{r['output']}'"
             )
 
-        message = "\n".join(lines)
-        title = "Results"
-        messagebox.showinfo(title, message)
+        self._show_results("Results", "\n".join(lines))
+
+    def _show_results(self, title: str, message: str) -> None:
+        """Display test results in a scrollable, copyable window."""
+        win = ctk.CTkToplevel(self)
+        win.title(title)
+        win.geometry("500x400")
+        win.minsize(400, 300)
+
+        text = ctk.CTkTextbox(
+            win,
+            wrap="none",
+            fg_color="#000000",
+            text_color="#e6edf3",
+            scrollbar_button_color="#f09c3a",
+            scrollbar_button_hover_color="#ff8800",
+        )
+        text.pack(fill="both", expand=True, padx=10, pady=10)
+        text.insert("1.0", message)
+        text.configure(state="normal")
+
