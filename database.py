@@ -97,6 +97,13 @@ class Database:
                     );"""
             )
 
+            # if database existed before the passed_tests column was added,
+            # ensure the column is present
+            cur.execute("PRAGMA table_info(UserTask);")
+            cols = [row[1] for row in cur.fetchall()]
+            if "passed_tests" not in cols:
+                cur.execute("ALTER TABLE UserTask ADD COLUMN passed_tests INTEGER DEFAULT 0;")
+
     def add_user(self, name: str, hashed_password: str, is_admin: bool):
         with self._tx():
             self._cursor.execute(
