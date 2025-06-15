@@ -102,7 +102,19 @@ class Database:
             cur.execute("PRAGMA table_info(UserTask);")
             cols = [row[1] for row in cur.fetchall()]
             if "passed_tests" not in cols:
-                cur.execute("ALTER TABLE UserTask ADD COLUMN passed_tests INTEGER DEFAULT 0;")
+                cur.execute(
+                    "ALTER TABLE UserTask ADD COLUMN passed_tests INTEGER DEFAULT 0;"
+                )
+
+    def _ensure_passed_tests_column(self) -> None:
+        """Ensure the UserTask table has the passed_tests column."""
+        self._cursor.execute("PRAGMA table_info(UserTask);")
+        cols = [row[1] for row in self._cursor.fetchall()]
+        if "passed_tests" not in cols:
+            with self._tx():
+                self._cursor.execute(
+                    "ALTER TABLE UserTask ADD COLUMN passed_tests INTEGER DEFAULT 0;"
+                )
 
     def add_user(self, name: str, hashed_password: str, is_admin: bool):
         with self._tx():
@@ -165,12 +177,13 @@ class Database:
         return task_id
 
     def get_tasks_for_user(self, user_id: int):
+        self._ensure_passed_tests_column()
         self._cursor.execute(
-                """SELECT t.task_id, t.title, t.description, t.expiration_date,
-                          t.validation_rules, ut.passed_tests
-                   FROM Task t JOIN UserTask ut ON t.task_id = ut.task_id
-                   WHERE ut.user_id=?;""",
-                (user_id,),
+            """SELECT t.task_id, t.title, t.description, t.expiration_date,
+                      t.validation_rules, ut.passed_tests
+               FROM Task t JOIN UserTask ut ON t.task_id = ut.task_id
+               WHERE ut.user_id=?;""",
+            (user_id,),
         )
         for row in self._cursor.fetchall():
             tid, tl, desc, exp, rules, passed = row
@@ -228,6 +241,7 @@ class Database:
 
     def update_task_progress(self, user_id: int, task_id: int, passed_tests: int):
         """Update how many tests the user passed for a task."""
+        self._ensure_passed_tests_column()
         with self._tx():
             self._cursor.execute(
                 "UPDATE UserTask SET passed_tests=? WHERE user_id=? AND task_id=?;",
@@ -236,6 +250,7 @@ class Database:
 
     def get_task_progress(self, user_id: int, task_id: int) -> int:
         """Return number of passed tests for this user and task."""
+        self._ensure_passed_tests_column()
         self._cursor.execute(
             "SELECT passed_tests FROM UserTask WHERE user_id=? AND task_id=?;",
             (user_id, task_id),
