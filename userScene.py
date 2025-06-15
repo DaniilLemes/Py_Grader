@@ -189,7 +189,12 @@ class UserScene(ctk.CTkFrame):
 
     def _open_task_window(self, task):
         """Open window to solve the selected task."""
-        task_id, title, description, expiration, rules, _ = task
+        # Tasks retrieved from `_show_my_tasks` contain a `passed` field while
+        # those from `_show_all_tasks` do not.  Handle both formats.
+        if len(task) == 6:
+            task_id, title, description, expiration, rules, _ = task
+        else:
+            task_id, title, description, expiration, rules = task
         tests = list(self.db.get_test_cases(task_id))
         TaskWindow(
             self.master,
