@@ -184,12 +184,18 @@ The application automatically configures itself on first run, but you can custom
 - **Security Settings** - Adjust encryption parameters
 
 ---
- 
+ ACCENT_ORANGE   = "#f97316"  # neon orange
+ACCENT_LIME     = "#a3e635"  # acid lime
+ACCENT_CYAN     = "#22d3ee"  # vivid cyan
+SOFT_WHITE      = "#f4f4f5"  # soft white
+DARK_BACKGROUND = "#0f0f0f"  # pitch black background
+GRAY_BORDER     = "#3f3f46"  # border and divider gray
+
 
 <div align="center">
 
-** Make in colaborate with PYHub pro desighner**
 
-*Happy Coding!* 🎉
+** Make in colaborate with PYHub pro desighner**
+ 
 
 </div>
