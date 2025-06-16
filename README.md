@@ -12,6 +12,7 @@
 *Organize, check, and manage programming assignments with style* ✨
 
 </div>
+![image](https://github.com/user-attachments/assets/e3b876e7-3eca-49fd-92a9-c98d18c6bc35)
 
 ---
 
