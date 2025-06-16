@@ -11,9 +11,11 @@
 
 *Organize, check, and manage programming assignments with style* ✨
 
-</div>
-![image](https://github.com/user-attachments/assets/e3b876e7-3eca-49fd-92a9-c98d18c6bc35)
+  
+![изображение](https://github.com/user-attachments/assets/cfe8b074-3b35-40bf-ba01-ba4d3f34ea89)
 
+</div>
+ 
 ---
 
 ## 🌟 Overview
@@ -182,12 +184,7 @@ The application automatically configures itself on first run, but you can custom
 - **Security Settings** - Adjust encryption parameters
 
 ---
-
-## 🤝 Contributing
-
-We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes PyGrader better for everyone.
-
----
+ 
 
 <div align="center">
 
