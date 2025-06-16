@@ -1,52 +1,203 @@
-# PyGrader
+# 🎓 PyGrader
 
-## Overview
-PyGrader is a desktop application for organizing and checking programming assignments. It is built with Tkinter and `customtkinter` for a modern interface. Task data and user accounts are stored in an encrypted SQLite database. If Docker is available, solutions can be executed inside a container for isolation; otherwise the code runs directly on the host.
+<div align="center">
 
-## Features
+**A Modern Desktop Application for Programming Assignment Management**
 
-### User functions
-- Log in and view assigned tasks
-- Read task descriptions and deadlines
-- Edit or upload solutions and run them against provided tests
-- Submit results and track how many tests were passed
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white)
+![Tkinter](https://img.shields.io/badge/GUI-Tkinter-green?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-Optional-blue?style=for-the-badge&logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-### Admin functions
-- Create and manage user accounts (with optional admin rights)
-- Add programming tasks with descriptions, validation rules and test cases
-- Review the list of users and tasks
+*Organize, check, and manage programming assignments with style* ✨
 
-## Installation
-Python 3.10 or newer is recommended. The application requires the following packages:
+</div>
 
-```
-pip install customtkinter cryptography
-```
+---
 
-For running code in a container install the Docker Python library and make sure the Docker daemon is available:
+## 🌟 Overview
 
-```
-pip install docker
-```
+PyGrader is a sleek desktop application designed for educators and students to streamline programming assignment workflows. Built with modern UI components and robust security features, it provides an intuitive platform for task management and automated code evaluation.
 
-If you prefer the themed widgets from ttkbootstrap you can install it as well:
+### ✨ **Key Highlights**
+- 🎨 **Modern Interface** - Built with `customtkinter` for a contemporary look
+- 🔒 **Secure Storage** - Encrypted SQLite database for all data
+- 🐳 **Docker Integration** - Optional containerized code execution for safety
+- 🌙 **Dark Theme** - Easy on the eyes with animated backgrounds
+- ⚡ **Real-time Testing** - Instant feedback on code submissions
 
-```
-pip install ttkbootstrap
-```
+---
 
-## Quick start
-1. Install the required packages as shown above.
-2. Run the application:
+## 🚀 Features
+
+### 👨‍🎓 **Student Features**
+| Feature | Description |
+|---------|-------------|
+| 🔐 **Secure Login** | Personal accounts with encrypted authentication |
+| 📋 **Task Overview** | View assigned tasks with clear descriptions and deadlines |
+| 💻 **Code Editor** | Built-in editor with syntax highlighting and file upload |
+| 🧪 **Live Testing** | Run code against provided test cases instantly |
+| 📊 **Progress Tracking** | Monitor test results and submission history |
+
+### 👨‍💼 **Administrator Features**
+| Feature | Description |
+|---------|-------------|
+| 👥 **User Management** | Create and manage student/admin accounts |
+| 📝 **Task Creation** | Design programming tasks with custom test cases |
+| 🔍 **Validation Rules** | Set up automated code validation criteria |
+| 📈 **Progress Monitoring** | Track student submissions and performance |
+| ⚙️ **System Administration** | Full control over application settings |
+
+---
+
+## 📦 Installation
+
+### 🔧 **Prerequisites**
+- **Python 3.10+** (recommended)
+- **Docker** (optional, for isolated code execution)
+
+### 📥 **Quick Install**
+
+1. **Install Core Dependencies**
    ```bash
-   python main.py
+   pip install customtkinter cryptography
    ```
-   On the first start a default administrator account is created with login `admin` and password `admin`.
-3. Use these credentials to log in and create additional users or tasks.
 
-## Usage
-- **Logging in:** choose *Admin Mode* on the login screen when signing in as the administrator.
-- **Admin panel:** create new users or tasks using the sidebar buttons. Each task can contain multiple test cases that will be used to check solutions.
-- **User panel:** select a task to open its dedicated window. Write or upload code, run it against the tests and submit the result to store your progress.
+2. **Optional: Docker Support**
+   ```bash
+   pip install docker
+   ```
+   > ⚠️ **Note:** Ensure Docker daemon is running for containerized execution
 
-The GUI has animated backgrounds and a dark theme to keep the interface clean. Docker integration is optional—if it is not available, tests will run directly on the host system.
+3. **Optional: Enhanced Theming**
+   ```bash
+   pip install ttkbootstrap
+   ```
+
+### 🎯 **Alternative Installation**
+```bash
+# One-liner for all dependencies
+pip install customtkinter cryptography docker ttkbootstrap
+```
+
+---
+
+## 🏃‍♂️ Quick Start
+
+### 1️⃣ **Launch Application**
+```bash
+python main.py
+```
+
+### 2️⃣ **First Login**
+On initial startup, a default administrator account is automatically created:
+- **Username:** `admin`
+- **Password:** `admin`
+
+> 🔒 **Security Note:** Change default credentials immediately after first login!
+
+### 3️⃣ **Getting Started**
+1. Select **Admin Mode** on the login screen
+2. Create additional user accounts and programming tasks
+3. Students can then log in and start working on assignments
+
+---
+
+## 💡 Usage Guide
+
+### 🎛️ **Administrator Workflow**
+
+```mermaid
+graph TD
+    A[Login as Admin] --> B[Access Admin Panel]
+    B --> C[Create Users]
+    B --> D[Create Tasks]
+    D --> E[Add Test Cases]
+    E --> F[Set Validation Rules]
+    F --> G[Monitor Progress]
+```
+
+**Steps:**
+1. **Login** → Toggle *Admin Mode* during authentication
+2. **User Management** → Create accounts with appropriate permissions
+3. **Task Creation** → Design assignments with comprehensive test suites
+4. **Monitoring** → Track student progress and submissions
+
+### 👨‍🎓 **Student Workflow**
+
+```mermaid
+graph TD
+    A[Student Login] --> B[View Tasks]
+    B --> C[Select Assignment]
+    C --> D[Read Description]
+    D --> E[Write/Upload Code]
+    E --> F[Run Tests]
+    F --> G[Submit Solution]
+    G --> H[Track Progress]
+```
+
+**Steps:**
+1. **Login** → Access your assigned tasks
+2. **Task Selection** → Choose from available assignments
+3. **Development** → Write code using built-in editor or upload files
+4. **Testing** → Validate solution against provided test cases
+5. **Submission** → Submit completed work for evaluation
+
+---
+
+## 🎨 Interface Features
+
+- **🌙 Dark Theme** - Modern, eye-friendly interface
+- **🎬 Animated Backgrounds** - Smooth transitions and visual effects
+- **📱 Responsive Layout** - Adapts to different screen sizes
+- **🔔 Real-time Notifications** - Instant feedback on actions
+- **📊 Progress Indicators** - Visual representation of completion status
+
+---
+
+## 🐳 Docker Integration
+
+PyGrader supports optional Docker integration for secure code execution:
+
+| Mode | Description | Security | Performance |
+|------|-------------|----------|-------------|
+| **Docker** | Code runs in isolated containers | 🟢 High | 🟡 Moderate |
+| **Host** | Code runs directly on system | 🟡 Moderate | 🟢 Fast |
+
+Docker integration provides:
+- 🛡️ **Isolation** - Student code runs in sandboxed environment
+- 🔒 **Security** - Protection against malicious code execution
+- 🧹 **Clean Environment** - Fresh container for each test run
+
+---
+
+## 🔧 Configuration
+
+The application automatically configures itself on first run, but you can customize:
+
+- **Database Location** - Modify SQLite file location
+- **Docker Settings** - Configure container parameters
+- **UI Themes** - Customize appearance and animations
+- **Security Settings** - Adjust encryption parameters
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help makes PyGrader better for everyone.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Made with ❤️ for educators and students worldwide**
+
+*Happy Coding!* 🎉
+
+</div>
