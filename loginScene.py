@@ -80,8 +80,7 @@ class LoginScene(ctk.CTkFrame):
         self.master.after(30, self._animate_particles)
 
     def _build_ui(self):
-        """Построение UI в фирменном стиле"""
-        # Главный контейнер логина
+         # Главный контейнер логина
         main_container = ctk.CTkFrame(
             self,
             fg_color="#000000",
@@ -100,7 +99,7 @@ class LoginScene(ctk.CTkFrame):
         logo_container = ctk.CTkFrame(header_frame, fg_color="transparent")
         logo_container.pack(anchor="center")
 
-        # "Py" часть логотипа
+        # "Py"
         py_label = ctk.CTkLabel(
             logo_container,
             text="Py",
@@ -109,7 +108,7 @@ class LoginScene(ctk.CTkFrame):
         )
         py_label.pack(side="left")
 
-        # "Grader" в оранжевом блоке
+        # "Grader"
         grader_frame = ctk.CTkFrame(
             logo_container,
             fg_color="#f09c3a",
@@ -176,7 +175,7 @@ class LoginScene(ctk.CTkFrame):
         self.pass_entry.bind("<FocusOut>", self._on_focus_out)
         self.pass_entry.bind("<Return>", lambda e: self._login())
 
-        # Admin режим с пикантностью
+        # Admin режим с пикантностью)))
         admin_container = ctk.CTkFrame(input_section, fg_color="transparent")
         admin_container.pack(fill="x", pady=(0, 15))
 
@@ -243,12 +242,12 @@ class LoginScene(ctk.CTkFrame):
             self.login_button.configure(fg_color="#ff6600")
             self.master.after(150, lambda: self.login_button.configure(fg_color="#f09c3a"))
         except:
-            pass  # Fallback если что-то пошло не так
+            pass  # Fallback
 
     def _pulse_login_button(self):
         """Мягкая пульсация кнопки логина"""
         try:
-            # Используем переменную для отслеживания состояния
+            #  переменнa для отслеживания состояния
             if not hasattr(self, '_pulse_state'):
                 self._pulse_state = False
 

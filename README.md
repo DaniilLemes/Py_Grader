@@ -191,7 +191,7 @@ We welcome contributions! Whether you're fixing bugs, adding features, or improv
 
 <div align="center">
 
-** Make in colaborate with POrnHub pro desighner**
+** Make in colaborate with PYHub pro desighner**
 
 *Happy Coding!* 🎉
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 from app import AppM
 from database import Database
 from utils import hash_sha256
